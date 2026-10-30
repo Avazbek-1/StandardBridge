@@ -113,7 +113,7 @@
             <div class="bg-white/10 rounded-xl p-4">
                 <p class="font-semibold text-sm">{{ T.expert_onboarding_step2 }}</p>
                 <p class="text-blue-200 text-xs mt-1">{{ T.expert_onboarding_step2_desc }}</p>
-                {% if request.user.expertprofile.is_verified %}
+                {% if request.user.expert_profile.is_verified %}
                 <span class="mt-3 inline-block bg-green-400 text-white text-xs font-semibold px-3 py-1.5 rounded-lg">✓ {{ T.verified_lbl }}</span>
                 {% else %}
                 <span class="mt-3 inline-block bg-yellow-400 text-gray-800 text-xs font-semibold px-3 py-1.5 rounded-lg">⏳ {{ T.sla_warning }}</span>
