@@ -25,7 +25,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             pass
 
     def save_user(self, request, sociallogin, form=None):
-        """Yangi Google foydalanuvchisi: tanlangan rol (tadbirkor yoki mutaxassis), email tasdiqlangan."""
+        """Yangi Google foydalanuvchisi: tanlangan rol (tadbirkor yoki mutaxassis), email tasdiqlangan va profil yaratiladi."""
         user = super().save_user(request, sociallogin, form)
         update_fields = []
         
@@ -42,6 +42,13 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             update_fields.append('is_email_verified')
         if update_fields:
             user.save(update_fields=update_fields)
+
+        from accounts.models import ExpertProfile, EntrepreneurProfile
+        if user.role == 'expert':
+            ExpertProfile.objects.get_or_create(user=user)
+        else:
+            EntrepreneurProfile.objects.get_or_create(user=user)
+
         return user
 
     def get_connect_redirect_url(self, request, socialaccount):
