@@ -1095,5 +1095,48 @@ function toggleFaq(btn){
   }
   setTimeout(type,800);
 })();
+
+/* ── PWA install prompt (Landing only) ── */
+var _deferredInstall = null;
+window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    _deferredInstall = e;
+    if(!sessionStorage.getItem('sb_pwa_prompt_shown')){
+        var banner = document.getElementById('pwa-install-banner');
+        if(banner) banner.classList.remove('hidden');
+        sessionStorage.setItem('sb_pwa_prompt_shown', 'true');
+    }
+});
+window.addEventListener('appinstalled', function(){
+    var banner = document.getElementById('pwa-install-banner');
+    if(banner) banner.classList.add('hidden');
+    _deferredInstall = null;
+});
+function sbInstallApp(){
+    if(!_deferredInstall) return;
+    _deferredInstall.prompt();
+    _deferredInstall.userChoice.then(function(){
+        _deferredInstall = null;
+        var banner = document.getElementById('pwa-install-banner');
+        if(banner) banner.classList.add('hidden');
+    });
+}
 </script>
+
+<!-- ── PWA install banner (Landing only) ── -->
+<div id="pwa-install-banner" class="hidden fixed bottom-0 left-0 right-0 z-40 p-3 sm:p-4" style="background:linear-gradient(135deg,#042C53,#185FA5);">
+    <div class="max-w-lg mx-auto flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+            <img src="/static/icons/icon-72.png" alt="SB" class="w-10 h-10 rounded-xl flex-shrink-0">
+            <div class="min-w-0">
+                <p class="text-white font-semibold text-sm leading-tight">{{ T.pwa_install_title }}</p>
+                <p class="text-blue-200 text-xs truncate">{{ T.pwa_install_sub }}</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <button onclick="sbInstallApp()" class="bg-white text-blue-700 text-sm font-semibold px-4 py-2 rounded-xl hover:bg-blue-50 transition">{{ T.pwa_install_btn }}</button>
+            <button onclick="document.getElementById('pwa-install-banner').classList.add('hidden')" class="text-blue-200 hover:text-white text-xl leading-none px-1">✕</button>
+        </div>
+    </div>
+</div>
 {% endblock %}
