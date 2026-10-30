@@ -25,11 +25,17 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             pass
 
     def save_user(self, request, sociallogin, form=None):
-        """Yangi Google foydalanuvchisi: role=entrepreneur, email tasdiqlangan."""
+        """Yangi Google foydalanuvchisi: tanlangan rol (tadbirkor yoki mutaxassis), email tasdiqlangan."""
         user = super().save_user(request, sociallogin, form)
         update_fields = []
+        
+        # Rolni cookie (signup_role) dan o'qish, default 'entrepreneur'
+        role = request.COOKIES.get('signup_role', 'entrepreneur')
+        if role not in ['entrepreneur', 'expert']:
+            role = 'entrepreneur'
+
         if not user.role:
-            user.role = 'entrepreneur'
+            user.role = role
             update_fields.append('role')
         if not user.is_email_verified:
             user.is_email_verified = True
