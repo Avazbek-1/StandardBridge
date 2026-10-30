@@ -25,33 +25,43 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             pass
 
     def save_user(self, request, sociallogin, form=None):
-        """Yangi Google foydalanuvchisi: tanlangan rol (tadbirkor yoki mutaxassis), email tasdiqlangan va profil yaratiladi."""
-        email = sociallogin.account.extra_data.get('email', '')
-        from accounts.models import CustomUser, ExpertProfile, EntrepreneurProfile
+        """Yangi Google foydalanuvchisi uchun CustomUser va uning profilini xavfsiz yaratish."""
+        data = sociallogin.account.extra_data
+        email = data.get('email', '')
+        first_name = data.get('given_name') or data.get('first_name', '')
+        last_name = data.get('family_name') or data.get('last_name', '')
         
+        from accounts.models import CustomUser, ExpertProfile, EntrepreneurProfile
+        import re
+
         if email:
             existing_user = CustomUser.objects.filter(email__iexact=email).first()
             if existing_user:
                 return existing_user
 
-        user = super().save_user(request, sociallogin, form)
-        update_fields = []
-        
+        # Unique username generatsiya qilish
+        base = re.sub(r'[^a-zA-Z0-9_]', '', email.split('@')[0])[:15] or 'user'
+        username = base
+        counter = 1
+        while CustomUser.objects.filter(username=username).exists():
+            username = f'{base}{counter}'
+            counter += 1
+
         # Rolni session yoki cookie dan o'qish, default 'entrepreneur'
         role = request.session.get('signup_role') or request.COOKIES.get('signup_role', 'entrepreneur')
         if role not in ['entrepreneur', 'expert']:
             role = 'entrepreneur'
 
-        if not user.role:
-            user.role = role
-            update_fields.append('role')
-        if not user.is_email_verified:
-            user.is_email_verified = True
-            update_fields.append('is_email_verified')
-        if update_fields:
-            user.save(update_fields=update_fields)
+        user = CustomUser.objects.create_user(
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            role=role,
+            is_email_verified=True,
+        )
 
-        if user.role == 'expert':
+        if role == 'expert':
             ExpertProfile.objects.get_or_create(user=user)
         else:
             EntrepreneurProfile.objects.get_or_create(user=user)
