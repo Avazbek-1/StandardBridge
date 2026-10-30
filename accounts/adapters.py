@@ -26,11 +26,19 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
 
     def save_user(self, request, sociallogin, form=None):
         """Yangi Google foydalanuvchisi: tanlangan rol (tadbirkor yoki mutaxassis), email tasdiqlangan va profil yaratiladi."""
+        email = sociallogin.account.extra_data.get('email', '')
+        from accounts.models import CustomUser, ExpertProfile, EntrepreneurProfile
+        
+        if email:
+            existing_user = CustomUser.objects.filter(email__iexact=email).first()
+            if existing_user:
+                return existing_user
+
         user = super().save_user(request, sociallogin, form)
         update_fields = []
         
-        # Rolni cookie (signup_role) dan o'qish, default 'entrepreneur'
-        role = request.COOKIES.get('signup_role', 'entrepreneur')
+        # Rolni session yoki cookie dan o'qish, default 'entrepreneur'
+        role = request.session.get('signup_role') or request.COOKIES.get('signup_role', 'entrepreneur')
         if role not in ['entrepreneur', 'expert']:
             role = 'entrepreneur'
 
@@ -43,7 +51,6 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         if update_fields:
             user.save(update_fields=update_fields)
 
-        from accounts.models import ExpertProfile, EntrepreneurProfile
         if user.role == 'expert':
             ExpertProfile.objects.get_or_create(user=user)
         else:

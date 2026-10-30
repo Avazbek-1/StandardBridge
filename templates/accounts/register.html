@@ -221,7 +221,7 @@
     </div>
 
     <!-- Google OAuth -->
-    <a href="{% url 'google_login' %}" onclick="googleSignup()"
+    <a href="{% url 'set_signup_role' %}?role=entrepreneur" onclick="googleSignup(event)" id="google-signup-link"
        style="display:flex;align-items:center;justify-content:center;gap:10px;
               width:100%;padding:12px;border:1.5px solid #e5e7eb;border-radius:10px;
               background:#fff;color:#374151;font-size:15px;font-weight:600;
@@ -249,9 +249,9 @@
 </div>
 
 <script>
-function googleSignup() {
+function googleSignup(e) {
   var role = document.getElementById('roleInput').value;
-  document.cookie = "signup_role=" + role + "; path=/; max-age=300";
+  e.currentTarget.href = "{% url 'set_signup_role' %}?role=" + role;
 }
 
 function setRole(role) {

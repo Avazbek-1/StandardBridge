@@ -306,6 +306,13 @@ def register_view(request):
     return render(request, 'accounts/register.html')
 
 
+def set_signup_role(request):
+    role = request.GET.get('role', 'entrepreneur')
+    if role in ['entrepreneur', 'expert']:
+        request.session['signup_role'] = role
+    return redirect('google_login')
+
+
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
