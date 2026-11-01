@@ -230,7 +230,7 @@ JSON:
 
     client = Groq(api_key=settings.GROQ_API_KEY, timeout=settings.AI_TIMEOUT, max_retries=1)
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="openai/gpt-oss-120b",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.2,
         max_tokens=2500,

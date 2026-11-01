@@ -6,7 +6,7 @@ O'zbekistondagi korxonalarni ISO/CE/EN sertifikatlashtirishga tayyorlash uchun B
 ## Stack
 - **Backend:** Django 6.0.5, SQLite
 - **Frontend:** Tailwind CSS (CDN), vanilla JS
-- **AI:** Groq API (llama-3.1-8b-instant)
+- **AI:** Groq API (openai/gpt-oss-120b)
 - **Auth:** Custom AbstractUser (rollar: entrepreneur, expert, admin)
 
 ## Ilovalar

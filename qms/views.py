@@ -538,7 +538,7 @@ def _qms_ai(prompt, max_tokens=900):
         from groq import Groq
         client = Groq(api_key=settings.GROQ_API_KEY, timeout=settings.AI_TIMEOUT, max_retries=1)
         resp = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
             max_tokens=max_tokens,
