@@ -14,7 +14,7 @@ Django 6.0.5 B2B startup — O'zbekistondagi korxonalarni ISO/CE/EN sertifikatla
 ## Stack
 - Backend: Django 6.0.5, SQLite (local) / PostgreSQL (Railway)
 - Frontend: Tailwind CSS (CDN), vanilla JS
-- AI: Groq API (llama-3.3-70b-versatile)
+- AI: Groq API (llama-3.1-70b-versatile)
 - Auth: Custom AbstractUser (roles: entrepreneur, expert, admin)
 - Deploy: Railway — sayt: standardbridge.up.railway.app
 
